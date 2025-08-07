@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import type { DocItem } from '@/lib/docs';
 
 function DocsSidebarContent() {
@@ -63,8 +64,9 @@ function DocsSidebarContent() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-1">
+        <div className="flex items-center justify-between gap-2 px-2 py-1">
           <h2 className="text-lg font-semibold">Documentation</h2>
+          <ThemeToggle />
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -93,12 +95,18 @@ export default function DocsLayout({
           <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border px-4">
             <SidebarTrigger />
             <Separator orientation="vertical" className="h-4" />
-            <h1 className="text-lg font-semibold">Documentation</h1>
+            <h1 className="text-lg font-semibold flex-1">Documentation</h1>
+            <nav>
+              <Link
+                href="/"
+                className="rounded-md px-3 py-1 text-sm font-medium hover:bg-muted"
+              >
+                Homepage
+              </Link>
+            </nav>
           </header>
           <main className="flex-1 p-6">
-            <div className="max-w-4xl mx-auto">
-              {children}
-            </div>
+            <div className="max-w-4xl mx-auto">{children}</div>
           </main>
         </SidebarInset>
       </div>
