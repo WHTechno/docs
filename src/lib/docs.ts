@@ -186,3 +186,97 @@ export function docExists(slug: string[]): boolean {
     return false;
   }
 }
+
+export interface ProjectInfo {
+  name: string;
+  slug: string;
+  description: string;
+  fileCount: number;
+  lastModified: Date;
+  introFile?: string;
+}
+
+/**
+ * Get all projects (top-level directories) in the docs folder
+ */
+export function getAllProjects(): ProjectInfo[] {
+  try {
+    if (!fs.existsSync(DOCS_PATH)) {
+      return [];
+    }
+
+    const items = fs.readdirSync(DOCS_PATH);
+    const projects: ProjectInfo[] = [];
+
+    for (const item of items) {
+      const itemPath = path.join(DOCS_PATH, item);
+      const stat = fs.statSync(itemPath);
+
+      // Only include directories (projects)
+      if (stat.isDirectory()) {
+        const projectInfo = getProjectInfo(item, itemPath);
+        if (projectInfo) {
+          projects.push(projectInfo);
+        }
+      }
+    }
+
+    // Sort projects by last modified date (newest first)
+    return projects.sort((a, b) => b.lastModified.getTime() - a.lastModified.getTime());
+  } catch (error) {
+    console.error('Error getting projects:', error);
+    return [];
+  }
+}
+
+/**
+ * Get detailed information about a specific project
+ */
+function getProjectInfo(folderName: string, folderPath: string): ProjectInfo | null {
+  try {
+    const files = fs.readdirSync(folderPath);
+    const mdFiles = files.filter(file => file.endsWith('.md'));
+    
+    if (mdFiles.length === 0) {
+      return null; // Skip folders without markdown files
+    }
+
+    // Look for intro/readme file
+    const introFiles = ['pengenalan.md', 'introduction.md', 'readme.md', 'index.md'];
+    const introFile = introFiles.find(intro => mdFiles.includes(intro));
+    
+    // If no intro file found, use the first markdown file
+    const firstFile = introFile || mdFiles[0];
+    
+    // Get description from intro file if available
+    let description = `Dokumentasi untuk ${formatTitle(folderName)}`;
+    if (introFile) {
+      try {
+        const introContent = fs.readFileSync(path.join(folderPath, introFile), 'utf-8');
+        // Extract first paragraph as description
+        const lines = introContent.split('\n').filter(line => line.trim());
+        const firstParagraph = lines.find(line => !line.startsWith('#') && line.trim().length > 0);
+        if (firstParagraph && firstParagraph.length > 10) {
+          description = firstParagraph.substring(0, 150) + (firstParagraph.length > 150 ? '...' : '');
+        }
+      } catch (error) {
+        console.error(`Error reading intro file for ${folderName}:`, error);
+      }
+    }
+
+    // Get last modified date
+    const stats = fs.statSync(folderPath);
+    
+    return {
+      name: formatTitle(folderName),
+      slug: folderName,
+      description,
+      fileCount: mdFiles.length,
+      lastModified: stats.mtime,
+      introFile: firstFile
+    };
+  } catch (error) {
+    console.error(`Error getting project info for ${folderName}:`, error);
+    return null;
+  }
+}
