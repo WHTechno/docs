@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Documentation Platform",
   description: "Professional documentation platform with dark/light mode support",
-    generator: 'v0.app'
+  generator: "v0.app"
 }
 
 export default function RootLayout({

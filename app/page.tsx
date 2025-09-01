@@ -1,12 +1,10 @@
 import { DocsLayout } from "@/components/docs-layout"
-import { DocumentationContent } from "@/components/documentation-content"
+import { DocsContentWrapper } from "@/components/docs-content-wrapper"
 
 export default function HomePage() {
   return (
     <DocsLayout>
-      {(projectId: string, activeSection: string) => (
-        <DocumentationContent projectId={projectId} activeSection={activeSection} />
-      )}
+      <DocsContentWrapper />
     </DocsLayout>
   )
 }
