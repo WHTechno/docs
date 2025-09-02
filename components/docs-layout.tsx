@@ -30,33 +30,13 @@ interface DocsLayoutProps {
 
 const projects = {
   mainnet: [
-    { id: "aaron", name: "Aaron Network", icon: "🅰️" },
-    { id: "atomone", name: "AtomOne", icon: "⚛️" },
-    { id: "axone", name: "Axone", icon: "🔷" },
-    { id: "bitbadges", name: "Bitbadges", icon: "🅱️" },
-    { id: "cnho", name: "CNHO Stables", icon: "🟢" },
-    { id: "crossfi", name: "Crossfi", icon: "❌" },
-    { id: "dhealth", name: "Dhealth Network", icon: "🏥" },
-    { id: "dungeon", name: "Dungeon Chain", icon: "🏰" },
-    { id: "hippo", name: "Hippo Protocol", icon: "🦛" },
-    { id: "ika", name: "Ika", icon: "🦑" },
-    { id: "kopi", name: "Kopi", icon: "☕" },
-    { id: "medas", name: "Medas Digital", icon: "💊" },
-    { id: "self", name: "Self Chain", icon: "🔗" },
-    { id: "symphony", name: "Symphony", icon: "🎵" },
-    { id: "tangle", name: "Tangle Network", icon: "🕸️" },
+    { id: "aaron", name: "Aaron Network", icon: "https://pbs.twimg.com/profile_images/1805893951280332800/mhxevRzA_400x400.jpg" },
+    { id: "axone", name: "Axone", icon: "https://pbs.twimg.com/profile_images/1841523650043772928/EeZIYE7B_400x400.jpg" },
+    { id: "bitbadges", name: "Bitbadges", icon: "https://pbs.twimg.com/profile_images/1948901739765084160/RdCGkJt4_400x400.jpg" },
   ],
   testnet: [
-    { id: "airchains", name: "Airchains", icon: "⛓️" },
-    { id: "atomone-test", name: "AtomOne", icon: "⚛️" },
-    { id: "dill", name: "Dill", icon: "🥒" },
-    { id: "empeiria", name: "Empeiria", icon: "🌟" },
-    { id: "ika-test", name: "Ika", icon: "🦑" },
-    { id: "kopi-test", name: "Kopi", icon: "☕" },
-    { id: "odiseo", name: "Odiseo", icon: "🚀" },
-    { id: "prysm", name: "Prysm Network", icon: "💎" },
-    { id: "safrochain", name: "Safrochain", icon: "🔒" },
-    { id: "symphony-test", name: "Symphony", icon: "🎵" },
+    { id: "airchains", name: "Airchains", icon: "https://cdn-icons-png.flaticon.com/512/5968/5968517.png" },
+    { id: "atomone-test", name: "AtomOne", icon: "https://cdn-icons-png.flaticon.com/512/5968/5968535.png" },
   ],
 }
 
@@ -112,14 +92,12 @@ export function DocsLayout({ children }: DocsLayoutProps) {
               <Menu className="h-6 w-6" />
               <span className="sr-only">Toggle Menu</span>
             </Button>
-
             <div className="mr-4 hidden md:flex">
               <a className="mr-6 flex items-center space-x-2 group" href="/">
                 <Book className="h-6 w-6 text-primary transition-transform duration-200 group-hover:scale-110" />
                 <span className="hidden font-bold sm:inline-block text-foreground">Documentation</span>
               </a>
             </div>
-
             <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
               <div className="w-full flex-1 md:w-auto md:flex-none">
                 <div className="relative">
@@ -133,7 +111,6 @@ export function DocsLayout({ children }: DocsLayoutProps) {
                   />
                 </div>
               </div>
-
               {mounted && (
                 <div className="flex items-center space-x-2">
                   <ThemeToggle />
@@ -142,7 +119,6 @@ export function DocsLayout({ children }: DocsLayoutProps) {
             </div>
           </div>
         </header>
-
         <div className="container flex-1 items-start md:grid md:grid-cols-[260px_minmax(0,1fr)] md:gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-12">
           {/* Sidebar */}
           <aside
@@ -160,12 +136,15 @@ export function DocsLayout({ children }: DocsLayoutProps) {
                     onClick={() => setProjectSelectorOpen(true)}
                   >
                     <div className="flex items-center space-x-3">
-                      <span className="text-xl">{selectedProject.icon}</span>
+                      <img
+                        src={selectedProject.icon}
+                        alt={selectedProject.name}
+                        className="w-6 h-6 rounded-full object-cover"
+                      />
                       <span className="font-semibold text-sm">{selectedProject.name}</span>
                     </div>
                     <ChevronDown className="h-4 w-4 transition-transform duration-200" />
                   </Button>
-
                   <div className="space-y-2 pt-2">
                     {navigationItems.map((item, index) => (
                       <button
@@ -187,7 +166,6 @@ export function DocsLayout({ children }: DocsLayoutProps) {
               </ScrollArea>
             </div>
           </aside>
-
           {/* Main Content */}
           <main className="relative py-8 lg:py-10">
             <div className="mx-auto w-full min-w-0 animate-fade-in">
@@ -195,7 +173,6 @@ export function DocsLayout({ children }: DocsLayoutProps) {
             </div>
           </main>
         </div>
-
         <Dialog open={projectSelectorOpen} onOpenChange={setProjectSelectorOpen}>
           <DialogContent className="max-w-3xl max-h-[85vh] p-0 animate-scale-in">
             <DialogHeader className="p-6 pb-4 border-b border-border">
@@ -213,7 +190,6 @@ export function DocsLayout({ children }: DocsLayoutProps) {
                 </Button>
               </div>
             </DialogHeader>
-
             <ScrollArea className="max-h-[65vh] px-6 pb-6">
               <div className="space-y-8">
                 {/* Mainnet Section */}
@@ -230,13 +206,16 @@ export function DocsLayout({ children }: DocsLayoutProps) {
                         className="h-14 justify-start space-x-3 hover:bg-accent/50 bg-card/30 border-border/50 hover:border-primary/30 transition-all duration-200 hover:shadow-sm hover:scale-[1.02]"
                         onClick={() => handleProjectChange(project)}
                       >
-                        <span className="text-xl">{project.icon}</span>
+                        <img
+                          src={project.icon}
+                          alt={project.name}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
                         <span className="font-semibold">{project.name}</span>
                       </Button>
                     ))}
                   </div>
                 </div>
-
                 {/* Testnet Section */}
                 <div>
                   <h3 className="text-lg font-bold mb-4 text-foreground flex items-center space-x-2">
@@ -251,7 +230,11 @@ export function DocsLayout({ children }: DocsLayoutProps) {
                         className="h-14 justify-start space-x-3 hover:bg-accent/50 bg-card/30 border-border/50 hover:border-primary/30 transition-all duration-200 hover:shadow-sm hover:scale-[1.02]"
                         onClick={() => handleProjectChange(project)}
                       >
-                        <span className="text-xl">{project.icon}</span>
+                        <img
+                          src={project.icon}
+                          alt={project.name}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
                         <span className="font-semibold">{project.name}</span>
                       </Button>
                     ))}
@@ -261,7 +244,6 @@ export function DocsLayout({ children }: DocsLayoutProps) {
             </ScrollArea>
           </DialogContent>
         </Dialog>
-
         {/* Mobile sidebar overlay */}
         {sidebarOpen && (
           <div
@@ -269,7 +251,6 @@ export function DocsLayout({ children }: DocsLayoutProps) {
             onClick={() => setSidebarOpen(false)}
           />
         )}
-
         {/* Footer */}
         <footer className="border-t border-border bg-background/50 backdrop-blur-sm">
           <div className="container py-6">

@@ -14,10 +14,9 @@ export function useBlockHeight(projectId: string): BlockHeightData {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    console.log("[v0] useBlockHeight called with projectId:", projectId)
+    let ignore = false
 
     if (!projectId || projectId.trim() === "") {
-      console.log("[v0] ProjectId is empty, skipping fetch")
       setHeight("Unavailable")
       setLoading(false)
       setError("Project not selected")
@@ -25,41 +24,47 @@ export function useBlockHeight(projectId: string): BlockHeightData {
     }
 
     const fetchBlockHeight = async () => {
+      setLoading(true)
+      setError(null)
       try {
-        setLoading(true)
-        setError(null)
-
-        console.log("[v0] Fetching block height for project:", projectId)
-
         const response = await fetch(`/api/block-height?project=${encodeURIComponent(projectId)}`)
+        let data: any = null
 
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
+        // Try to parse JSON regardless of status code
+        try {
+          data = await response.json()
+        } catch {
+          data = null
         }
 
-        const data = await response.json()
+        if (!response.ok) {
+          const errorMsg = (data && data.error) ? data.error : `HTTP error! status: ${response.status}`
+          throw new Error(errorMsg)
+        }
 
-        if (data.success && data.height) {
+        if (data && data.success && data.height) {
           const formattedHeight = Number.parseInt(data.height).toLocaleString()
-          setHeight(formattedHeight)
-          console.log("[v0] Successfully fetched block height:", formattedHeight)
+          if (!ignore) setHeight(formattedHeight)
         } else {
           throw new Error("Invalid response format")
         }
       } catch (err) {
-        console.error("[v0] Error fetching block height:", err)
-        setError(err instanceof Error ? err.message : "Failed to fetch block height")
-        setHeight("Unavailable")
+        const msg = err instanceof Error ? err.message : "Failed to fetch block height"
+        if (!ignore) {
+          setError(msg)
+          setHeight("Unavailable")
+        }
       } finally {
-        setLoading(false)
+        if (!ignore) setLoading(false)
       }
     }
 
     fetchBlockHeight()
     const interval = setInterval(fetchBlockHeight, 5000)
-
-    return () => clearInterval(interval)
+    return () => {
+      ignore = true
+      clearInterval(interval)
+    }
   }, [projectId])
 
   return { height, loading, error }
