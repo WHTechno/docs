@@ -67,35 +67,31 @@ export function DocumentationContent({ projectId = "aaron", activeSection = "ove
         </TabsList>
 
         <TabsContent value="endpoints" className="space-y-4">
-          {content.endpoints.rpc.map((endpoint, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-              <code className="text-sm">{endpoint}</code>
-              <Button size="sm" variant="ghost" onClick={() => copyToClipboard(endpoint)}>
-                <Copy className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
-          {content.endpoints.api.map((endpoint, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-              <code className="text-sm">{endpoint}</code>
-              <Button size="sm" variant="ghost" onClick={() => copyToClipboard(endpoint)}>
-                <Copy className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
-          {content.endpoints.grpc && (
-            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-              {content.endpoints.grpc.map((endpoint, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                  <code className="text-sm">{endpoint}</code>
-                  <Button size="sm" variant="ghost" onClick={() => copyToClipboard(endpoint)}>
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </TabsContent>
+  {content.endpoints.rpc.map((endpoint, index) => (
+    <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+      <code className="text-sm">{endpoint}</code>
+      <Button size="sm" variant="ghost" onClick={() => copyToClipboard(endpoint)}>
+        <Copy className="h-4 w-4" />
+      </Button>
+    </div>
+  ))}
+  {content.endpoints.api.map((endpoint, index) => (
+    <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+      <code className="text-sm">{endpoint}</code>
+      <Button size="sm" variant="ghost" onClick={() => copyToClipboard(endpoint)}>
+        <Copy className="h-4 w-4" />
+      </Button>
+    </div>
+  ))}
+  {content.endpoints.grpc?.map((endpoint, index) => (
+    <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+      <code className="text-sm">{endpoint}</code>
+      <Button size="sm" variant="ghost" onClick={() => copyToClipboard(endpoint)}>
+        <Copy className="h-4 w-4" />
+      </Button>
+    </div>
+  ))}
+</TabsContent>
 
         <TabsContent value="network" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

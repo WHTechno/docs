@@ -33,6 +33,7 @@ const projects = {
     { id: "aaron", name: "Aaron Network", icon: "https://pbs.twimg.com/profile_images/1805893951280332800/mhxevRzA_400x400.jpg" },
     { id: "axone", name: "Axone", icon: "https://pbs.twimg.com/profile_images/1841523650043772928/EeZIYE7B_400x400.jpg" },
     { id: "bitbadges", name: "Bitbadges", icon: "https://pbs.twimg.com/profile_images/1948901739765084160/RdCGkJt4_400x400.jpg" },
+    { id: "warden", name: "Warden Protocol", icon: "https://pbs.twimg.com/profile_images/1904848026742484992/nO3RP237_400x400.jpg" },
   ],
   testnet: [
     { id: "airchains", name: "Airchains", icon: "https://cdn-icons-png.flaticon.com/512/5968/5968517.png" },
@@ -46,20 +47,70 @@ const navigationItems = [
   { title: "Upgrade", section: "upgrade", icon: "▶" },
   { title: "Sync", section: "sync", icon: "▶" },
   { title: "Public API", section: "public-api", icon: "▶" },
-  { title: "CLI Cheatsheet", section: "cli-cheatsheet", icon: "▶" },
+  { id: "cli-cheatsheet", title: "CLI Cheatsheet", section: "cli-cheatsheet", icon: "▶" },
 ]
+
+const getDefaultProject = () => {
+  if (typeof window === 'undefined') {
+    return projects.mainnet[0]
+  }
+  try {
+    const savedProjectId = localStorage.getItem('selectedProjectId')
+    if (savedProjectId) {
+      const allProjects = [...projects.mainnet, ...projects.testnet]
+      const savedProject = allProjects.find(p => p.id === savedProjectId)
+      if (savedProject) return savedProject
+    }
+  } catch (error) {
+    console.warn('Error accessing localStorage:', error)
+  }
+  return projects.mainnet[0]
+}
+
+const getDefaultSection = () => {
+  if (typeof window === 'undefined') {
+    return "installation"
+  }
+  if (window.location.hash) {
+    const hash = window.location.hash.replace('#', '')
+    if (navigationItems.some(item => item.section === hash)) {
+      return hash
+    }
+  }
+  return "installation"
+}
 
 export function DocsLayout({ children }: DocsLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedProject, setSelectedProject] = useState(() => projects.mainnet[0])
+  const [selectedProject, setSelectedProject] = useState(projects.mainnet[0])
   const [projectSelectorOpen, setProjectSelectorOpen] = useState(false)
   const [activeSection, setActiveSection] = useState("installation")
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
+    const defaultProject = getDefaultProject()
+    const defaultSection = getDefaultSection()
+    setSelectedProject((prev) => (prev.id !== defaultProject.id ? defaultProject : prev))
+    setActiveSection((prev) => (prev !== defaultSection ? defaultSection : prev))
   }, [])
+
+  useEffect(() => {
+    if (mounted && selectedProject) {
+      try {
+        localStorage.setItem('selectedProjectId', selectedProject.id)
+      } catch (error) {
+        console.warn('Error saving to localStorage:', error)
+      }
+    }
+  }, [selectedProject, mounted])
+
+  useEffect(() => {
+    if (mounted && activeSection) {
+      window.location.hash = activeSection
+    }
+  }, [activeSection, mounted])
 
   const handleProjectChange = (project: (typeof projects.mainnet)[0]) => {
     setSelectedProject(project)
@@ -77,12 +128,45 @@ export function DocsLayout({ children }: DocsLayoutProps) {
     setActiveSection,
   }
 
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-background transition-colors duration-300" suppressHydrationWarning>
+        <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-xl" suppressHydrationWarning>
+          <div className="container flex h-16 items-center" suppressHydrationWarning></div>
+        </header>
+        <div
+          className="container flex-1 items-start md:grid md:grid-cols-[260px_minmax(0,1fr)] md:gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-12"
+          suppressHydrationWarning
+        >
+          <aside className="fixed top-16 z-30 -ml-2 hidden h-[calc(100vh-4rem)] w-full shrink-0 md:sticky md:block" suppressHydrationWarning></aside>
+          <main className="relative py-8 lg:py-10">
+            <div className="mx-auto w-full min-w-0" suppressHydrationWarning>
+              <div className="container flex items-center justify-center h-screen" suppressHydrationWarning>
+                <div className="animate-pulse text-muted-foreground" suppressHydrationWarning>
+                  Loading documentation...
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+        <footer className="border-t border-border bg-background/50 backdrop-blur-sm">
+          <div className="container py-6" suppressHydrationWarning>
+            <div className="flex items-center justify-center" suppressHydrationWarning>
+              <p className="text-sm text-muted-foreground">
+                Powered by <span className="font-semibold text-foreground">WHTech</span>
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    )
+  }
+
   return (
     <DocsLayoutContext.Provider value={contextValue}>
-      <div className="min-h-screen bg-background transition-colors duration-300">
-        {/* Header */}
-        <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 transition-all duration-200">
-          <div className="container flex h-16 items-center">
+      <div className="min-h-screen bg-background transition-colors duration-300" suppressHydrationWarning>
+        <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 transition-all duration-200" suppressHydrationWarning>
+          <div className="container flex h-16 items-center" suppressHydrationWarning>
             <Button
               variant="ghost"
               size="sm"
@@ -111,21 +195,22 @@ export function DocsLayout({ children }: DocsLayoutProps) {
                   />
                 </div>
               </div>
-              {mounted && (
-                <div className="flex items-center space-x-2">
-                  <ThemeToggle />
-                </div>
-              )}
+              <div className="flex items-center space-x-2">
+                <ThemeToggle />
+              </div>
             </div>
           </div>
         </header>
-        <div className="container flex-1 items-start md:grid md:grid-cols-[260px_minmax(0,1fr)] md:gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-12">
-          {/* Sidebar */}
+        <div
+          className="container flex-1 items-start md:grid md:grid-cols-[260px_minmax(0,1fr)] md:gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-12"
+          suppressHydrationWarning
+        >
           <aside
             className={cn(
               "fixed top-16 z-30 -ml-2 hidden h-[calc(100vh-4rem)] w-full shrink-0 md:sticky md:block transition-all duration-300",
-              sidebarOpen && "block animate-slide-in",
+              sidebarOpen && "block animate-slide-in"
             )}
+            suppressHydrationWarning
           >
             <div className="h-full py-8 pr-6">
               <ScrollArea className="h-full w-full">
@@ -146,15 +231,15 @@ export function DocsLayout({ children }: DocsLayoutProps) {
                     <ChevronDown className="h-4 w-4 transition-transform duration-200" />
                   </Button>
                   <div className="space-y-2 pt-2">
-                    {navigationItems.map((item, index) => (
+                    {navigationItems.map((item) => (
                       <button
-                        key={index}
+                        key={item.section}
                         onClick={() => handleSectionChange(item.section)}
                         className={cn(
                           "w-full flex items-center space-x-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 hover:translate-x-1 text-left",
                           activeSection === item.section
                             ? "bg-primary text-primary-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50",
+                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                         )}
                       >
                         <span className="text-xs">{item.icon}</span>
@@ -166,9 +251,8 @@ export function DocsLayout({ children }: DocsLayoutProps) {
               </ScrollArea>
             </div>
           </aside>
-          {/* Main Content */}
           <main className="relative py-8 lg:py-10">
-            <div className="mx-auto w-full min-w-0 animate-fade-in">
+            <div className="mx-auto w-full min-w-0 animate-fade-in" suppressHydrationWarning>
               {children}
             </div>
           </main>
@@ -192,7 +276,6 @@ export function DocsLayout({ children }: DocsLayoutProps) {
             </DialogHeader>
             <ScrollArea className="max-h-[65vh] px-6 pb-6">
               <div className="space-y-8">
-                {/* Mainnet Section */}
                 <div>
                   <h3 className="text-lg font-bold mb-4 text-foreground flex items-center space-x-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -216,7 +299,6 @@ export function DocsLayout({ children }: DocsLayoutProps) {
                     ))}
                   </div>
                 </div>
-                {/* Testnet Section */}
                 <div>
                   <h3 className="text-lg font-bold mb-4 text-foreground flex items-center space-x-2">
                     <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
@@ -244,17 +326,15 @@ export function DocsLayout({ children }: DocsLayoutProps) {
             </ScrollArea>
           </DialogContent>
         </Dialog>
-        {/* Mobile sidebar overlay */}
         {sidebarOpen && (
           <div
             className="fixed inset-0 top-16 z-20 bg-background/80 backdrop-blur-sm md:hidden animate-fade-in"
             onClick={() => setSidebarOpen(false)}
           />
         )}
-        {/* Footer */}
         <footer className="border-t border-border bg-background/50 backdrop-blur-sm">
-          <div className="container py-6">
-            <div className="flex items-center justify-center">
+          <div className="container py-6" suppressHydrationWarning>
+            <div className="flex items-center justify-center" suppressHydrationWarning>
               <p className="text-sm text-muted-foreground">
                 Powered by <span className="font-semibold text-foreground">WHTech</span>
               </p>
