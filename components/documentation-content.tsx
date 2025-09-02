@@ -43,8 +43,17 @@ export function DocumentationContent({ projectId = "aaron", activeSection = "ove
   const renderNetworkOverview = () => (
     <div className="space-y-6">
       <div className="text-center space-y-4">
-        <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center text-4xl">
-          {content.icon}
+        <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center text-4xl overflow-hidden">
+          {content.icon?.startsWith("http") ? (
+            <img
+              src={content.icon}
+              alt={content.name}
+              className="w-full h-full object-cover"
+              style={{ borderRadius: "9999px" }}
+            />
+          ) : (
+            <span>{content.icon}</span>
+          )}
         </div>
         <h1 className="text-3xl font-bold">{content.name}</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{content.overview.description}</p>

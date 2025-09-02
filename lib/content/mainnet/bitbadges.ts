@@ -3,7 +3,7 @@ import type { ProjectContent } from "../types"
 export const bitbadgesContent: ProjectContent = {
   id: "bitbadges",
   name: "BitBadges",
-  icon: "🅱️",
+  icon: "https://pbs.twimg.com/profile_images/1948901739765084160/RdCGkJt4_400x400.jpg",
   network: "mainnet",
 
   networkInfo: {
@@ -21,7 +21,7 @@ export const bitbadgesContent: ProjectContent = {
   },
 
   endpoints: {
-    rpc: ["https://rpc-bitbadges.sychonix.com"],
+    rpc: ["https://rpc-bitbadges.vinjan.xyz"],
     api: ["https://api-bitbadges.sychonix.com"],
     grpc: ["https://grpc-bitbadges.sychonix.com"],
   },
@@ -161,7 +161,7 @@ sudo systemctl restart bitbadgeschaind && sudo journalctl -u bitbadgeschaind -f`
   },
 
   publicApi: {
-    rpcEndpoints: ["https://rpc-bitbadges.sychonix.com"],
+    rpcEndpoints: ["https://lcd.bitbadges.io"],
     apiEndpoints: ["https://api-bitbadges.sychonix.com"],
     grpcEndpoints: ["https://grpc-bitbadges.sychonix.com"],
     peers: ["d5519e378247dfb61dfe90652d1fe3e2b3005a5b@bitbadges-rpc.itrocket.net:26656"],
